@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ML Group Project - Precision Models</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.625rem", "lg": "0.875rem", "xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            background: #f8f9fc;
+        }
+
+        /* Subtle gradient text for hero */
+        .hero-text {
+            color: #1e293b;
+        }
+        .hero-accent {
+            background: linear-gradient(135deg, #475569, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Card theme colors — muted, professional */
+        .card-theme-1 { --accent: #4f7c5e; --accent-light: rgba(79,124,94,0.08); --accent-border: rgba(79,124,94,0.25); }
+        .card-theme-2 { --accent: #6366a0; --accent-light: rgba(99,102,160,0.08); --accent-border: rgba(99,102,160,0.25); }
+        .card-theme-3 { --accent: #9e5a6e; --accent-light: rgba(158,90,110,0.08); --accent-border: rgba(158,90,110,0.25); }
+        .card-theme-4 { --accent: #8a7340; --accent-light: rgba(138,115,64,0.08); --accent-border: rgba(138,115,64,0.25); }
+        .card-theme-5 { --accent: #4a7f8a; --accent-light: rgba(74,127,138,0.08); --accent-border: rgba(74,127,138,0.25); }
+
+        .model-card {
+            background: #ffffff;
+            border: 1px solid #e8eaef;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .model-card:hover {
+            border-color: var(--accent-border);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+            transform: translateY(-4px);
+        }
+
+        .model-card .card-tag {
+            color: var(--accent);
+            background: var(--accent-light);
+            border: 1px solid var(--accent-border);
+        }
+
+        .model-card .card-btn {
+            color: var(--accent);
+        }
+
+        .model-card .card-number {
+            color: var(--accent);
+            opacity: 0.06;
+        }
+
+        .model-card .card-img-overlay {
+            background: linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.4) 100%);
+        }
+
+        .horizontal-scroll-container::-webkit-scrollbar {
+            height: 5px;
+        }
+        .horizontal-scroll-container::-webkit-scrollbar-track {
+            background: #f1f2f6;
+            border-radius: 10px;
+        }
+        .horizontal-scroll-container::-webkit-scrollbar-thumb {
+            background: #c1c5d0;
+            border-radius: 10px;
+        }
+        .horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #a0a5b3;
+        }
+
+        /* Subtle top accent line on cards */
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .model-card:hover::before {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="font-body antialiased">
+
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/60">
+<div class="flex justify-between items-center px-10 py-5 max-w-7xl mx-auto">
+<div class="text-xl font-bold text-slate-800 tracking-tighter font-headline">
+                ML Group Project
+            </div>
+<div class="hidden md:flex items-center gap-10">
+<a class="text-indigo-500 font-semibold border-b-2 border-indigo-400 pb-1 font-['Inter'] tracking-tight transition-colors duration-300" href="#">Home</a>
+<a class="text-slate-400 font-medium pb-1 font-['Inter'] tracking-tight hover:text-slate-600 transition-colors duration-300" href="#">Models</a>
+<a class="text-slate-400 font-medium pb-1 font-['Inter'] tracking-tight hover:text-slate-600 transition-colors duration-300" href="#">About</a>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-slate-600">menu</span>
+</div>
+</div>
+</nav>
+
+<main class="pt-32 pb-20 px-6 max-w-[1440px] mx-auto">
+<!-- Hero Section -->
+<header class="mb-20 text-left px-4">
+<h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-none">
+    <span class="hero-text">Machine Learning</span><br>
+    <span class="hero-accent">Projects</span>
+</h1>
+<p class="max-w-2xl text-lg text-slate-400 font-light leading-relaxed">
+                Advanced machine learning architectures deployed as precision instruments. Exploring the intersections of computer vision, linguistics, and predictive analytics.
+            </p>
+<!-- Subdued category indicators -->
+<div class="flex flex-wrap gap-3 mt-8">
+    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200">
+        Computer Vision
+    </span>
+    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200">
+        NLP
+    </span>
+    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200">
+        Sentiment
+    </span>
+    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200">
+        Regression
+    </span>
+    <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-medium text-slate-500 bg-slate-100 border border-slate-200">
+        Forensics
+    </span>
+</div>
+</header>
+
+<!-- Model Cards Section -->
+<div class="horizontal-scroll-container overflow-x-auto pb-8">
+<div class="flex flex-nowrap gap-6 px-4">
+
+<!-- Agriculture Card -->
+<div class="card-theme-1 model-card group relative flex-none w-[320px] rounded-xl overflow-hidden cursor-pointer">
+<a class="flex flex-col h-full" href="#pest-detection">
+<div class="w-full h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-100" data-alt="3D illustration of a friendly ladybug pest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6mmPOKaqSXqmtV1eDDg848ofbb7CWW7f8YBqNLGB6R692LASny-lpbDmlmAod1UmjwH7Oyc5l_ch7nNWnaXL_awzL75tfLQzaF0ms-JeXnfIT3JC5Mi8SNi5epRSUXXJ-_H8A_4lm7a194PTwMT0HeTQpriHzHd0AxV-_XdptgUbRBRI8Q8KDEgho2aCnDm0e_bBA_4HYZ0a-YdkZhEZGTzqCoXeVHEOyF6M7wlSlzM7LAyXuG6vMzFLv8_enWvDSlI8oTELhWtck">
+<div class="card-img-overlay absolute inset-0"></div>
+</div>
+<div class="p-7 flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="card-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest">Computer Vision</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-slate-800 mb-2.5 h-12 line-clamp-2">Agriculture Pest Detection</h2>
+<p class="text-slate-400 text-sm font-light leading-relaxed line-clamp-3">Autonomous identification of crop pathogens through high-resolution convolutional networks.</p>
+</div>
+<div class="mt-5">
+<div class="card-btn text-sm font-semibold flex items-center gap-2 group/btn">
+                                    Explore Weights
+                                    <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="absolute top-4 right-4 text-4xl font-black italic pointer-events-none card-number">01</div>
+</a>
+</div>
+
+<!-- Indian Language Card -->
+<div class="card-theme-2 model-card group relative flex-none w-[320px] rounded-xl overflow-hidden cursor-pointer">
+<a class="flex flex-col h-full" href="#language-detection">
+<div class="w-full h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-100" data-alt="3D illustration of an audio sound wave" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBMQeK7376baoB4sug_BEN_i9k0zrsARXF2PlE9p0DLsoSEzbX5Lan4Ed6g36-qaj0oc6l0-rrIqDuVMK6m3f1MdLxl00oSbZ9PMwxdRgTU_0Gby6rLwY5hV_H0ndlnYq23twDeBR6Vv8_cPZKsU3ykKyULhg564AaD9VxTssMXekp0Rzvhs7seoRzcNl6GhcMEt9yFN4ixOn_yv08jvajolmrq6Cb_9xSfLMoKBQ3SxNSuabgPf_9WLWeHiZ_acyzufStA-D3kfuU">
+<div class="card-img-overlay absolute inset-0"></div>
+</div>
+<div class="p-7 flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="card-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest">NLP / Linguistics</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-slate-800 mb-2.5 h-12 line-clamp-2">Indian Language Detection</h2>
+<p class="text-slate-400 text-sm font-light leading-relaxed line-clamp-3">Multi-dialect classification utilizing transformer-based sequence modeling.</p>
+</div>
+<div class="mt-5">
+<div class="card-btn text-sm font-semibold flex items-center gap-2 group/btn">
+                                    Analyze Syntax
+                                    <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="absolute top-4 right-4 text-4xl font-black italic pointer-events-none card-number">02</div>
+</a>
+</div>
+
+<!-- IMDb Sentiment Analysis -->
+<div class="card-theme-3 model-card group relative flex-none w-[320px] rounded-xl overflow-hidden cursor-pointer">
+<a class="flex flex-col h-full" href="#sentiment-analysis">
+<div class="w-full h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-100" data-alt="3D illustration of a thinking emoji" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWRwxpA0sLXuPVS9QggHdSLcFjfhuVDOVTi-ZOPiInH047ISp5r0Y8kDqodz4FwouVRWQst7IF-qtrUdvMthVTS4QomwgiUGNdv9ENhEzrOL3Zqx4DNikK4-2Znx5EgSIK7KA3o8SyNugAJrzt6eN-W_Yr10lwovRlGmHitfU6GHGetvZQXzTr481-wiyVnTNRn8RZ2JYgMHL0vqgVUrva1ztEz7VmDjxRyMkbu2tj9C9zZxynZDOeCg2hIKR0cG3X5E1w36DbSzYT">
+<div class="card-img-overlay absolute inset-0"></div>
+</div>
+<div class="p-7 flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="card-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest">Sentiment Analysis</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-slate-800 mb-2.5 h-12 line-clamp-2">IMDb Sentiment Analysis</h2>
+<p class="text-slate-400 text-sm font-light leading-relaxed line-clamp-3">Deciphering semantic intent and emotional polarity across massive cinematic textual datasets.</p>
+</div>
+<div class="mt-5">
+<div class="card-btn text-sm font-semibold flex items-center gap-2 group/btn">
+                                    View Probabilities
+                                    <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="absolute top-4 right-4 text-4xl font-black italic pointer-events-none card-number">03</div>
+</a>
+</div>
+
+<!-- Salary Prediction -->
+<div class="card-theme-4 model-card group relative flex-none w-[320px] rounded-xl overflow-hidden cursor-pointer">
+<a class="flex flex-col h-full" href="#salary-prediction">
+<div class="w-full h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-100" data-alt="3D illustration of stacked coins and a growth arrow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChMx3-FXXftOSoD4x6V0VycGRIm8nJmb8T7cQNuQ8BwV2b4quSBtR-xV5xCr-Z_cODtseFbrnOjqP9p2i3V0PJopZP4NymkXegg93Ai8sRfrXqv1Iale67cS9FaI_NAjDxuzhB7IPbbFLYV_XpLsiqzd4DuuAAn4Bosqr_OtgqKIg-qHomLxTwG-jmVGNW2YsU-tvmq0yGZlnmeOTnBQ581Pv8h7cJTDlysJPJnjfnJj2n-qdWDT2pCqTloDw6ahd6k1U3unNQdSwQ">
+<div class="card-img-overlay absolute inset-0"></div>
+</div>
+<div class="p-7 flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="card-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest">Regression Model</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-slate-800 mb-2.5 h-12 line-clamp-2">Salary Prediction</h2>
+<p class="text-slate-400 text-sm font-light leading-relaxed line-clamp-3">Stochastic forecasting of compensation structures using multi-variable regression.</p>
+</div>
+<div class="mt-5">
+<div class="card-btn text-sm font-semibold flex items-center gap-2 group/btn">
+                                    Run Simulation
+                                    <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="absolute top-4 right-4 text-4xl font-black italic pointer-events-none card-number">04</div>
+</a>
+</div>
+
+<!-- Deep Fake Detection -->
+<div class="card-theme-5 model-card group relative flex-none w-[320px] rounded-xl overflow-hidden cursor-pointer">
+<a class="flex flex-col h-full" href="#deepfake-detection">
+<div class="w-full h-48 overflow-hidden relative">
+<img class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-all duration-500 scale-[1.02] group-hover:scale-100" data-alt="3D illustration of a detective figure" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBX3evavmU0XV4oQZJx1HdvKoS6FPm_oXK2pd4aZd-hz8ThXL04aYJseQRGxaUP12vIgfg2xVnBUbCgLD6UEHYnGoY1AzXGSNAaej-ED4K0Q1WKXtv1sNDgUkJ7FGS5O8VEkLJliB4Q37JnFY8EYlaO5mLUL6DdfpKhm5pSHwzPleByIFRNzCxl_WdeZLYwXEZxG0HQjtPCCSbrMsXn9fkARkXrH9CVA_QYkiIp0kaTGyx0CrRgWy0TtJK0hVKwq-QuOvNgFgcR6e8-">
+<div class="card-img-overlay absolute inset-0"></div>
+</div>
+<div class="p-7 flex-1 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="card-tag inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest">Forensics / AI Security</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-slate-800 mb-2.5 h-12 line-clamp-2">Deep Fake Detection</h2>
+<p class="text-slate-400 text-sm font-light leading-relaxed line-clamp-3">Exposing generative adversarial inconsistencies through microscopic signal analysis.</p>
+</div>
+<div class="mt-5">
+<div class="card-btn text-sm font-semibold flex items-center gap-2 group/btn">
+                                    Initiate Scan
+                                    <span class="material-symbols-outlined text-lg group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="absolute top-4 right-4 text-4xl font-black italic pointer-events-none card-number">05</div>
+</a>
+</div>
+
+</div>
+</div>
+</main>
+
+<!-- Footer -->
+<footer class="w-full py-14 px-10 border-t border-slate-200 bg-slate-50">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-8">
+<div class="text-slate-700 font-bold font-headline tracking-tight">
+                ML Group Project
+            </div>
+<div class="text-slate-400 font-['Inter'] text-sm tracking-wide">
+                Made By : Aniket Tomar&nbsp; , Abhayraj SIngh Chouhan , Anuj Yadav</div>
+<div class="flex gap-8">
+<a class="text-slate-400 font-['Inter'] text-sm hover:text-slate-600 underline-offset-4 hover:underline transition-colors duration-300" href="#">Privacy</a>
+<a class="text-slate-400 font-['Inter'] text-sm hover:text-slate-600 underline-offset-4 hover:underline transition-colors duration-300" href="#">Terms</a>
+<a class="text-slate-400 font-['Inter'] text-sm hover:text-slate-600 underline-offset-4 hover:underline transition-colors duration-300" href="#">Github</a>
+</div>
+</div>
+</footer>
+</body></html>

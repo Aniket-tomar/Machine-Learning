@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Predictor — Glassdoor ML</title>
+    <meta name="description" content="Predict employee salaries using machine learning. Powered by TF-IDF and Linear Regression on Glassdoor data.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-card: rgba(15, 20, 40, 0.85);
+            --bg-input: rgba(25, 32, 60, 0.7);
+            --border: rgba(99, 115, 255, 0.15);
+            --border-focus: rgba(99, 115, 255, 0.5);
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --accent-2: #8b5cf6;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%);
+            animation: bgShift 20s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+        @keyframes bgShift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-5%, 3%) rotate(3deg); }
+        }
+
+        .container {
+            position: relative; z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #a5b4fc;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .badge .dot {
+            width: 6px; height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e2e8f0 0%, #a5b4fc 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Model stats bar */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 24px;
+        }
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: border-color 0.3s;
+        }
+        .card:hover { border-color: rgba(99, 115, 255, 0.3); }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: all 0.25s;
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #475569;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-group select option {
+            background: #1e293b;
+            color: var(--text);
+        }
+
+        /* Row layout */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        /* Button */
+        .btn-predict {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--accent-glow);
+        }
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+        .btn-predict:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-predict .shimmer {
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Result card */
+        .result-card {
+            margin-top: 32px;
+            text-align: center;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-card.show { display: block; }
+
+        .result-inner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(99, 102, 241, 0.08));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .result-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .result-salary {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--success), #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+        .result-unit {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .result-range {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .range-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .range-value {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .range-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            color: #475569;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="badge"><span class="dot"></span> Model Active</div>
+            <h1>Salary Predictor</h1>
+            <p>Predict data-science salaries using Machine Learning trained on real Glassdoor listings.</p>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-value">{{ r2 }}</span>
+                    <span class="stat-label">R² Accuracy</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">${{ mae }}K</span>
+                    <span class="stat-label">Avg Error (MAE)</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">742</span>
+                    <span class="stat-label">Training Samples</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Prediction Form -->
+        <div class="card">
+            <form id="predictForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title</label>
+                        <input type="text" id="jobTitle" list="jobTitleList"
+                               placeholder="e.g. Data Scientist" autocomplete="off">
+                        <datalist id="jobTitleList">
+                            {% for t in job_titles %}
+                            <option value="{{ t }}">
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" id="companyName" list="companyList"
+                               placeholder="e.g. Google" autocomplete="off">
+                        <datalist id="companyList">
+                            {% for c in company_names %}
+                            <option value="{{ c }}">
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="jobDescription">Job Description</label>
+                    <textarea id="jobDescription"
+                              placeholder="Paste or describe the job responsibilities, required skills (Python, AWS, Spark, etc.), experience level..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-predict" id="btnPredict">
+                    <span id="btnText">Predict Salary</span>
+                    <div class="spinner" id="spinner"></div>
+                    <span class="shimmer"></span>
+                </button>
+            </form>
+
+            <!-- Result -->
+            <div class="result-card" id="resultCard">
+                <div class="result-inner">
+                    <div class="result-label">Estimated Annual Salary</div>
+                    <div class="result-salary" id="resultSalary">—</div>
+                    <div class="result-unit">thousands (USD) per year</div>
+                    <div class="result-range">
+                        <div class="range-item">
+                            <span class="range-value" id="resultLow">—</span>
+                            <span class="range-label">Low Estimate</span>
+                        </div>
+                        <div class="range-item">
+                            <span class="range-value" id="resultHigh">—</span>
+                            <span class="range-label">High Estimate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Powered by scikit-learn &bull; TF-IDF + Linear Regression &bull; Glassdoor Dataset
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictForm');
+        const btn = document.getElementById('btnPredict');
+        const btnText = document.getElementById('btnText');
+        const spinner = document.getElementById('spinner');
+        const resultCard = document.getElementById('resultCard');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const jobTitle = document.getElementById('jobTitle').value.trim();
+            const companyName = document.getElementById('companyName').value.trim();
+            const jobDescription = document.getElementById('jobDescription').value.trim();
+
+            if (!jobTitle && !companyName && !jobDescription) {
+                shakeButton();
+                return;
+            }
+
+            // Show loading
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            btn.disabled = true;
+            resultCard.classList.remove('show');
+
+            try {
+                const res = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        job_title: jobTitle,
+                        company_name: companyName,
+                        job_description: jobDescription
+                    })
+                });
+                const data = await res.json();
+
+                document.getElementById('resultSalary').textContent = `$${data.salary}K`;
+                document.getElementById('resultLow').textContent = `$${data.salary_low}K`;
+                document.getElementById('resultHigh').textContent = `$${data.salary_high}K`;
+
+                resultCard.classList.add('show');
+            } catch (err) {
+                alert('Prediction failed. Please try again.');
+            } finally {
+                btnText.style.display = 'inline';
+                spinner.style.display = 'none';
+                btn.disabled = false;
+            }
+        });
+
+        function shakeButton() {
+            btn.style.animation = 'shake 0.4s';
+            setTimeout(() => btn.style.animation = '', 400);
+        }
+    </script>
+</body>
+</html>

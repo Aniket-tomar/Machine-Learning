@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Multi-Project Hub Poster</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --shadow-glow: 0 0 25px rgba(79, 172, 254, 0.4);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79,172,254,0.12) 0%, rgba(11,15,25,1) 40%);
+            animation: rotateBg 35s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .poster-container {
+            width: 90%;
+            max-width: 1200px;
+            padding: 50px;
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            animation: slideUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin: 50px 0;
+            z-index: 10;
+        }
+
+        /* Decorative top gradient line */
+        .poster-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        header {
+            margin-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulseText 4s infinite alternate;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin: 0 auto;
+            max-width: 700px;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .model-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: itemFadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .model-card:nth-child(1) { animation-delay: 0.3s; }
+        .model-card:nth-child(2) { animation-delay: 0.5s; }
+        .model-card:nth-child(3) { animation-delay: 0.7s; }
+        .model-card:nth-child(4) { animation-delay: 0.9s; }
+        .model-card:nth-child(5) { animation-delay: 1.1s; }
+
+        /* Card glow effect on hover */
+        .model-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .model-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: rgba(79, 172, 254, 0.4);
+            box-shadow: var(--shadow-glow);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .model-card:hover::after {
+            opacity: 1;
+            transform: translate(10%, 10%);
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .model-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        .model-card:nth-child(2n) .model-icon {
+            animation-delay: -1.5s;
+        }
+
+        .model-card h3 {
+            font-size: 1.6rem;
+            margin: 0 0 12px 0;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .model-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .model-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .tag {
+            background: rgba(79, 172, 254, 0.15);
+            color: #6ed0ff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .model-card:hover .tag {
+            background: rgba(79, 172, 254, 0.25);
+            border-color: rgba(79, 172, 254, 0.5);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: scale(0.95) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes itemFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseText {
+            0% { filter: brightness(1); text-shadow: 0 0 10px rgba(0,242,254,0.1); }
+            100% { filter: brightness(1.2); text-shadow: 0 0 25px rgba(0,242,254,0.4); }
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Particles effect purely with CSS/JS */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #4facfe;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #00f2fe;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            20% { opacity: 0.8; transform: translateY(80vh) scale(1); }
+            80% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.8rem; }
+            .poster-container { padding: 30px 20px; }
+            .models-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="animated-bg"></div>
+
+    <div class="particles" id="particles">
+        <!-- JS will populate particles -->
+    </div>
+
+    <div class="poster-container">
+        <header>
+            <h1>AI Intelligence Hub</h1>
+            <p>A unified ecosystem exploring the boundaries of Machine Learning across five cutting-edge domains, featuring advanced neural architectures and interactive frontends.</p>
+        </header>
+
+        <div class="models-grid">
+            
+            <div class="model-card">
+                <div class="card-content">
+                    <div class="model-icon">🪴</div>
+                    <h3>Pest Detection</h3>
+                    <p>Advanced computer vision analyzing crop health using a robust Keras MobileNetV2 architecture. Empowers agriculture with instant, accurate insights.</p>
+                </div>
+                <div class="model-tags">
+                    <span class="tag">Computer Vision</span>
+                    <span class="tag">Keras</span>
+                    <span class="tag">Flask</span>
+                </div>
+            </div>
+
+            <div class="model-card">
+                <div class="card-content">
+                    <div class="model-icon">🗣️</div>
+                    <h3>Indian Languages NLP</h3>
+                    <p>Sophisticated audio and language processing tailored for diverse regional dialects. Breaking communication barriers with natural language AI.</p>
+                </div>
+                <div class="model-tags">
+                    <span class="tag">NLP</span>
+                    <span class="tag">Audio AI</span>
+                    <span class="tag">Streamlit</span>
+                </div>
+            </div>
+
+            <div class="model-card">
+                <div class="card-content">
+                    <div class="model-icon">🧠</div>
+                    <h3>Sentiment Analysis</h3>
+                    <p>Modern application discerning emotional undertones from text. Equipped with a sleek Vite frontend and a high-performance Python backend API.</p>
+                </div>
+                <div class="model-tags">
+                    <span class="tag">Text Analysis</span>
+                    <span class="tag">Vite / React</span>
+                    <span class="tag">Full-Stack</span>
+                </div>
+            </div>
+
+            <div class="model-card">
+                <div class="card-content">
+                    <div class="model-icon">💰</div>
+                    <h3>Salary Prediction</h3>
+                    <p>Precision numerical modeling that identifies complex patterns in HR statistics to forecast compensation metrics based on professional experience features.</p>
+                </div>
+                <div class="model-tags">
+                    <span class="tag">Regression</span>
+                    <span class="tag">Data Sci</span>
+                    <span class="tag">Predictive</span>
+                </div>
+            </div>
+
+            <div class="model-card">
+                <div class="card-content">
+                    <div class="model-icon">🎭</div>
+                    <h3>Deepfake Detection</h3>
+                    <p>State-of-the-art forensic video analysis distinguishing authentic media from synthetically generated deepfakes with exceptional certainty.</p>
+                </div>
+                <div class="model-tags">
+                    <span class="tag">Deep Learning</span>
+                    <span class="tag">Forensics</span>
+                    <span class="tag">Neural Net</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Generate floating particles for an immersive background
+        document.addEventListener("DOMContentLoaded", () => {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 45;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Randomize styling properties for organic feel
+                const size = Math.random() * 4 + 1.5; // 1.5 to 5.5px
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}vw`;
+                
+                // Varied speeds and delays
+                const duration = Math.random() * 20 + 10; // 10 to 30s
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `-${Math.random() * 20}s`; // Negative delay so they are already on screen
+                
+                // Subtle color variations (mostly cyan, some purple/blue)
+                const randCol = Math.random();
+                if(randCol > 0.85) {
+                    particle.style.background = '#8a2be2';
+                    particle.style.boxShadow = '0 0 12px #8a2be2';
+                } else if (randCol > 0.7) {
+                    particle.style.background = '#ffffff';
+                    particle.style.boxShadow = '0 0 15px #ffffff';
+                }
+
+                particlesContainer.appendChild(particle);
+            }
+        });
+    </script>
+</body>
+</html>

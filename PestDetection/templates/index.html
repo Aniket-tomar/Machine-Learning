@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pest Detection — AI-Powered Pest Identifier</title>
+  <meta name="description" content="Upload an image to identify agricultural pests using AI-powered MobileNetV2 deep learning model." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- Background glow blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🐛</span>
+        <h1>Pest<span class="accent">Detect</span></h1>
+      </div>
+      <p class="tagline">AI-powered agricultural pest identification</p>
+    </header>
+
+    <!-- Main content -->
+    <main class="main">
+      <!-- Upload card -->
+      <section class="card upload-card" id="upload-card">
+        <h2>Upload an Image</h2>
+        <p class="subtitle">Drag &amp; drop or click to select a pest image</p>
+
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-content" id="dropzone-content">
+            <div class="dropzone-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <p class="dropzone-text">Drop image here</p>
+            <p class="dropzone-hint">or click to browse</p>
+          </div>
+          <!-- Image preview -->
+          <img id="preview-img" class="preview-img hidden" alt="Preview" />
+          <input type="file" id="file-input" accept="image/*" hidden />
+        </div>
+
+        <button class="btn-primary" id="predict-btn" disabled>
+          <span class="btn-text">Analyze Image</span>
+          <span class="btn-loader hidden" id="btn-loader">
+            <svg class="spinner" width="20" height="20" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+      </section>
+
+      <!-- Results card -->
+      <section class="card results-card hidden" id="results-card">
+        <h2>Detection Results</h2>
+        <div class="result-top" id="result-top">
+          <!-- Filled dynamically -->
+        </div>
+        <div class="result-bars" id="result-bars">
+          <!-- Filled dynamically -->
+        </div>
+        <button class="btn-secondary" id="reset-btn">Analyze Another Image</button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Powered by MobileNetV2 &bull; Built with TensorFlow &amp; Flask</p>
+    </footer>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
