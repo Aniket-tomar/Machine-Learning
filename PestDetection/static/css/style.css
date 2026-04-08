@@ -379,10 +379,100 @@ body {
   color: var(--text-dim);
 }
 
+/* --- Badges ------------------------------------------------------- */
+.badge {
+  display: inline-block;
+  padding: .2rem .65rem;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+  vertical-align: middle;
+  margin-left: .5rem;
+}
+
+.badge-harmful {
+  background: rgba(248, 113, 113, .15);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, .3);
+}
+
+.badge-safe {
+  background: rgba(52, 211, 153, .15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, .3);
+}
+
+/* --- Info Sections (Crop Effects / Remedies) ----------------------- */
+.info-section {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--accent);
+  animation: fadeUp .45s ease-out;
+}
+
+.info-section.remedies-section {
+  border-left-color: #34d399;
+  background: rgba(52, 211, 153, .05);
+}
+
+.info-title {
+  font-size: .9rem;
+  font-weight: 700;
+  margin-bottom: .6rem;
+  color: var(--text);
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-list li {
+  position: relative;
+  padding: .35rem 0 .35rem 1.2rem;
+  font-size: .8rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.info-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.remedies-list li::before {
+  content: "✓";
+  color: #34d399;
+  font-size: .85rem;
+}
+
+/* --- Result top layout fix for info sections ---------------------- */
+.result-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1rem 0 1.5rem;
+}
+
 /* --- Responsive --------------------------------------------------- */
 @media (max-width: 480px) {
   .container { padding: 1.25rem 1rem 2rem; }
   .logo h1   { font-size: 1.6rem; }
   .card      { padding: 1.5rem 1.25rem; }
   .bar-label { width: 80px; font-size: .75rem; }
+  .info-section { padding: .75rem 1rem; }
+  .info-list li { font-size: .75rem; }
 }

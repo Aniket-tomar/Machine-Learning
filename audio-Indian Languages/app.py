@@ -29,6 +29,25 @@ st.markdown("""
         font-weight: bold;
         color: #00FFAA;
     }
+    .greeting-box {
+        padding: 20px;
+        border-radius: 15px;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border: 1px solid #00FFAA33;
+        text-align: center;
+        margin-top: 15px;
+    }
+    .greeting-text {
+        font-size: 26px;
+        font-weight: bold;
+        color: #FFD700;
+        margin-bottom: 6px;
+    }
+    .greeting-translation {
+        font-size: 14px;
+        color: #94a3b8;
+        font-style: italic;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -36,6 +55,32 @@ st.markdown("""
 model = tf.keras.models.load_model("language_model.keras")
 scaler = joblib.load("scaler.pkl")
 encoder = joblib.load("label_encoder.pkl")
+
+# "Hello, how are you doing?" in each supported Indian language
+GREETINGS = {
+    "Hindi":      "नमस्ते, आप कैसे हैं?",
+    "Bengali":    "হ্যালো, আপনি কেমন আছেন?",
+    "Telugu":     "హలో, మీరు ఎలా ఉన్నారు?",
+    "Marathi":    "नमस्कार, तुम्ही कसे आहात?",
+    "Tamil":      "வணக்கம், நீங்கள் எப்படி இருக்கிறீர்கள்?",
+    "Gujarati":   "હેલો, તમે કેમ છો?",
+    "Kannada":    "ಹಲೋ, ನೀವು ಹೇಗಿದ್ದೀರಿ?",
+    "Malayalam":  "ഹലോ, നിങ്ങൾ എങ്ങനെയിരിക്കുന്നു?",
+    "Punjabi":    "ਸਤ ਸ੍ਰੀ ਅਕਾਲ, ਤੁਸੀਂ ਕਿਵੇਂ ਹੋ?",
+    "Odia":       "ନମସ୍କାର, ଆପଣ କେମିତି ଅଛନ୍ତି?",
+    "Urdu":       "ہیلو، آپ کیسے ہیں؟",
+    "Assamese":   "নমস্কাৰ, আপুনি কেনে আছে?",
+    "English":    "Hello, how are you doing?",
+    "Sanskrit":   "नमस्ते, भवान् कथम् अस्ति?",
+    "Nepali":     "नमस्ते, तपाईंलाई कस्तो छ?",
+    "Sindhi":     "هيلو، توهان ڪيئن آهيو؟",
+    "Konkani":    "नमस्कार, तूं कसो आसा?",
+    "Manipuri":   "ꯍꯦꯜꯂꯣ, ꯅꯍꯥꯛ ꯀꯝꯗꯧꯔꯤ?",
+    "Bodo":       "हेलो, नों मानो बे?",
+    "Dogri":      "नमस्ते, तुस्सी किव्वें हो?",
+    "Maithili":   "प्रणाम, अहाँ कोना छी?",
+    "Santali":    "ᱡᱚᱦᱟᱨ, ᱟᱢ ᱚᱠᱟ ᱢᱮᱱᱟ?",
+}
 
 # Feature extraction
 def extract_features(file):
@@ -72,6 +117,15 @@ if uploaded_file:
         st.markdown(f"""
             <div class="result-box">
                 🎯 Predicted Language: {language}
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Greeting in the detected language
+        greeting = GREETINGS.get(language, GREETINGS.get("English"))
+        st.markdown(f"""
+            <div class="greeting-box">
+                <div class="greeting-text">💬 {greeting}</div>
+                <div class="greeting-translation">"Hello, how are you doing?" in {language}</div>
             </div>
         """, unsafe_allow_html=True)
 

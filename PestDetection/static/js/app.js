@@ -132,15 +132,44 @@
 
     const top = predictions[0];
     const emoji = PEST_EMOJI[top.label] || "🔍";
+    const harmBadge = top.harmful
+      ? `<span class="badge badge-harmful">⚠️ Harmful Pest</span>`
+      : `<span class="badge badge-safe">✅ Beneficial</span>`;
+
+    // Build crop effects HTML
+    let effectsHTML = "";
+    if (top.crop_effects && top.crop_effects.length) {
+      effectsHTML = `
+        <div class="info-section">
+          <h3 class="info-title">🌾 Effects on Crops</h3>
+          <ul class="info-list">
+            ${top.crop_effects.map(e => `<li>${e}</li>`).join("")}
+          </ul>
+        </div>`;
+    }
+
+    // Build remedies HTML (only for harmful pests)
+    let remediesHTML = "";
+    if (top.harmful && top.remedies && top.remedies.length) {
+      remediesHTML = `
+        <div class="info-section remedies-section">
+          <h3 class="info-title">🛡️ How to Get Rid of Them</h3>
+          <ul class="info-list remedies-list">
+            ${top.remedies.map(r => `<li>${r}</li>`).join("")}
+          </ul>
+        </div>`;
+    }
 
     // Top prediction card
     resultTop.innerHTML = `
       <div class="result-top-icon">${emoji}</div>
       <div class="result-top-info">
-        <div class="result-top-label">${top.label}</div>
+        <div class="result-top-label">${top.label} ${harmBadge}</div>
         <div class="result-top-confidence">${top.confidence}% confidence</div>
         <div class="result-top-desc">${top.description}</div>
       </div>
+      ${effectsHTML}
+      ${remediesHTML}
     `;
 
     // Confidence bars
